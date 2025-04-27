@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Role = require('../models/Role');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const register = async (req, res) => {
     try {
@@ -26,11 +27,14 @@ const register = async (req, res) => {
             role: role._id
         });
 
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
         res.status(201).json({
+            token,
             user: {
                 id: user._id,
                 name: user.name,
-                role: role.name 
+                role: role.name
             }
         });
     } catch (error) {
@@ -52,7 +56,10 @@ const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
         res.json({
+            token,
             user: {
                 id: user._id,
                 name: user.name,
