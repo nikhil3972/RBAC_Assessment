@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Card, InputGroup } from 'react-bootstrap';
+import { Form, Button, Container, Card, InputGroup, Alert } from 'react-bootstrap';
 import { MdPerson, MdEmail, MdLock } from 'react-icons/md';
 import { FaUserTag } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import CommonInputField from '../common/CommonInputField';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -14,20 +14,38 @@ const Signup = () => {
         roleName: 'user'
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Signup Data:', formData);
+        setError('');
+
+        try {
+            const { name, email, password, roleName } = formData;
+            await axios.post('http://localhost:5000/api/auth/register', {
+                name,
+                email,
+                password,
+                roleName
+            });
+            navigate('/login');
+        } catch (err) {
+            setError('Error registering. Please try again.');
+        }
     };
 
     return (
         <Container className="d-flex align-items-center justify-content-center min-vh-100">
             <Card className="p-4 shadow" style={{ width: '100%', maxWidth: '400px' }}>
                 <h2 className="text-center mb-4">Signup</h2>
+
+                {error && <Alert variant="danger">{error}</Alert>}
+
                 <Form onSubmit={handleSubmit}>
                     <CommonInputField
                         type="text"
@@ -55,7 +73,7 @@ const Signup = () => {
                                 <MdLock />
                             </InputGroup.Text>
                             <Form.Control
-                                type={showPassword ? "text" : "password"}
+                                type={showPassword ? 'text' : 'password'}
                                 placeholder="Password"
                                 name="password"
                                 value={formData.password}
