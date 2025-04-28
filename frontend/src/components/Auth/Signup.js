@@ -5,6 +5,7 @@ import { FaUserTag } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import CommonInputField from '../common/CommonInputField';
 
 const Signup = () => {
     const [formData, setFormData] = useState({

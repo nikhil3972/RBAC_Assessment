@@ -26,7 +26,8 @@ const Login = () => {
                 password: formData.password
             });
             localStorage.setItem('token', response.data.token);
-            navigate('/');
+            localStorage.setItem('role', response.data.user.role);
+            navigate('/admin');
         } catch (err) {
             setError('Invalid credentials');
         }
@@ -73,7 +74,7 @@ const Login = () => {
 
                 <div className="text-center">
                     <span>Don't have an account? </span>
-                    <Link to="/signup">Sign Up</Link>
+                    <Link to="/">Sign Up</Link>
                 </div>
             </Card>
         </Container>
