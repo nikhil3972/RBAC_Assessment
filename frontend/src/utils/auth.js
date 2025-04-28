@@ -1,8 +1,8 @@
 export const isAuthenticated = () => {
-    return localStorage.getItem('token') ? true : false;
+    return sessionStorage.getItem('token') ? true : false;
 };
 
 export const isAdmin = () => {
-    const role = localStorage.getItem('role');
+    const role = sessionStorage.getItem('role');
     return role === 'admin';
 };

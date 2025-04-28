@@ -16,7 +16,7 @@ const Dashboard = () => {
     const fetchPosts = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             if (!token) return;
             const response = await axios.get('http://localhost:5000/api/blogs', {
                 headers: { Authorization: `Bearer ${token}` }
@@ -39,7 +39,7 @@ const Dashboard = () => {
     const handleCreateOrUpdate = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             if (!token) return;
 
             if (editPostId) {
@@ -64,7 +64,7 @@ const Dashboard = () => {
 
     const handleDelete = async (id) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             if (!token) return;
 
             await axios.delete(`http://localhost:5000/api/blogs/${id}`, {

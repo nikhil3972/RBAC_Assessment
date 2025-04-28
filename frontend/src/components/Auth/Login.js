@@ -25,9 +25,9 @@ const Login = () => {
                 email: formData.email,
                 password: formData.password
             });
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('role', response.data.user.role);
-            navigate('/admin');
+            sessionStorage.setItem('token', response.data.token);
+            sessionStorage.setItem('role', response.data.user.role);
+            navigate('/blogs');
         } catch (err) {
             setError('Invalid credentials');
         }
