@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
     minlength: [8, 'Password must be at least 8 characters long.'],
     maxlength: [128, 'Password cannot exceed 128 characters.'],
   },
+  isVerified: { type: Boolean, default: false },
   role: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Role', 
