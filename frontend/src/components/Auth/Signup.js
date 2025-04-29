@@ -6,6 +6,7 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CommonInputField from '../common/CommonInputField';
+import { toast } from "react-toastify";
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -35,8 +36,22 @@ const Signup = () => {
                 roleName
             });
             navigate('/login');
-        } catch (err) {
-            setError('Error registering. Please try again.');
+        } catch (error) {
+              if (
+                error.response &&
+                error.response.data &&
+                error.response.data.message
+              ) {
+                const messages = Array.isArray(error.response.data.message)
+                  ? error.response.data.message.join("\n") 
+                  : error.response.data.message;
+        
+                toast.error(messages, {
+                  style: { whiteSpace: "pre-line" },
+                });
+              } else {
+                toast.error("Error registering. Please try again.");
+              }
         }
     };
 

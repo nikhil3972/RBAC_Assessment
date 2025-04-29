@@ -4,6 +4,7 @@ import { MdEmail, MdLock } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import CommonInputField from '../common/CommonInputField';
 import axios from 'axios';
+import { toast } from "react-toastify";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -28,8 +29,22 @@ const Login = () => {
             sessionStorage.setItem('token', response.data.token);
             sessionStorage.setItem('role', response.data.user.role);
             navigate('/blogs');
-        } catch (err) {
-            setError('Invalid credentials');
+        } catch (error) {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.message
+            ) {
+              const messages = Array.isArray(error.response.data.message)
+                ? error.response.data.message.join("\n") 
+                : error.response.data.message;
+      
+              toast.error(messages, {
+                style: { whiteSpace: "pre-line" },
+              });
+            } else {
+              toast.error("Invalid credentials.");
+            }
         }
     };
 
