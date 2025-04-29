@@ -12,6 +12,7 @@ import {
 } from "react-bootstrap";
 import { isAdmin, isAuthenticated } from "../../utils/auth";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -21,6 +22,8 @@ const Dashboard = () => {
   const [editPostId, setEditPostId] = useState(null);
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -145,6 +148,15 @@ const Dashboard = () => {
   };
 
   return (
+    <>
+    <Row className="position-absolute top-0 end-0 p-3">
+      <Col className="d-flex justify-content-end">
+        <Button variant="outline-danger" onClick={() => navigate("/login")}>
+          Logout
+        </Button>
+      </Col>
+    </Row>
+
     <Container className="py-5">
       <h2 className="text-center mb-5">Dashboard</h2>
 
@@ -248,6 +260,7 @@ const Dashboard = () => {
         </Modal.Body>
       </Modal>
     </Container>
+    </>
   );
 };
 
