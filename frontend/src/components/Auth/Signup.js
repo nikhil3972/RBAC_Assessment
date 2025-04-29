@@ -3,7 +3,7 @@ import { Form, Button, Container, Card, InputGroup, Alert } from 'react-bootstra
 import { MdPerson, MdEmail, MdLock } from 'react-icons/md';
 import { FaUserTag } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import CommonInputField from '../common/CommonInputField';
 import { toast } from "react-toastify";
@@ -17,7 +17,6 @@ const Signup = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,7 +34,8 @@ const Signup = () => {
                 password,
                 roleName
             });
-            navigate('/login');
+            toast.success("Verification email sent. Please check your inbox");
+            resetForm();
         } catch (error) {
               if (
                 error.response &&
@@ -53,6 +53,17 @@ const Signup = () => {
                 toast.error("Error registering. Please try again.");
               }
         }
+    };
+
+    const resetForm = () => {
+        setFormData({
+            name: '',
+            email: '',
+            password: '',
+            roleName: 'user'
+        });
+        setShowPassword(false);
+        setError('');
     };
 
     return (

@@ -26,6 +26,7 @@ const Login = () => {
                 email: formData.email,
                 password: formData.password
             });
+            toast.success("Logged in successfully");
             sessionStorage.setItem('token', response.data.token);
             sessionStorage.setItem('role', response.data.user.role);
             navigate('/blogs');
