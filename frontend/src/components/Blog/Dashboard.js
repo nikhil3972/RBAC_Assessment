@@ -13,6 +13,7 @@ import {
 import { isAdmin, isAuthenticated } from "../../utils/auth";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import "./Dashboard.css"; 
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -35,21 +36,11 @@ const Dashboard = () => {
       });
       setPosts(response.data);
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        const messages = Array.isArray(error.response.data.message)
-          ? error.response.data.message.join("\n")
-          : error.response.data.message;
-
-        toast.error(messages, {
-          style: { whiteSpace: "pre-line" },
-        });
-      } else {
-        toast.error("Failed to fetch blogs.");
-      }
+      const message = error?.response?.data?.message;
+      toast.error(
+        Array.isArray(message) ? message.join("\n") : message || "Failed to fetch blogs.",
+        { style: { whiteSpace: "pre-line" } }
+      );
     } finally {
       setLoading(false);
     }
@@ -86,21 +77,11 @@ const Dashboard = () => {
       resetForm();
       fetchPosts();
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        const messages = Array.isArray(error.response.data.message)
-          ? error.response.data.message.join("\n")
-          : error.response.data.message;
-
-        toast.error(messages, {
-          style: { whiteSpace: "pre-line" },
-        });
-      } else {
-        toast.error("Failed to create/update blog.");
-      }
+      const message = error?.response?.data?.message;
+      toast.error(
+        Array.isArray(message) ? message.join("\n") : message || "Failed to create/update blog.",
+        { style: { whiteSpace: "pre-line" } }
+      );
     }
   };
 
@@ -115,21 +96,11 @@ const Dashboard = () => {
       toast.success("Blog deleted successfully");
       fetchPosts();
     } catch (error) {
-        if (
-            error.response &&
-            error.response.data &&
-            error.response.data.message
-          ) {
-            const messages = Array.isArray(error.response.data.message)
-              ? error.response.data.message.join("\n")
-              : error.response.data.message;
-    
-            toast.error(messages, {
-              style: { whiteSpace: "pre-line" },
-            });
-          } else {
-            toast.error("Failed to delete blog.");
-          }
+      const message = error?.response?.data?.message;
+      toast.error(
+        Array.isArray(message) ? message.join("\n") : message || "Failed to delete blog.",
+        { style: { whiteSpace: "pre-line" } }
+      );
     }
   };
 
@@ -149,117 +120,123 @@ const Dashboard = () => {
 
   return (
     <>
-    <Row className="position-absolute top-0 end-0 p-3">
-      <Col className="d-flex justify-content-end">
-        <Button variant="outline-danger" onClick={() => navigate("/login")}>
-          Logout
-        </Button>
-      </Col>
-    </Row>
+      <Row className="bg-dark text-white py-3 px-4 align-items-center">
+        <Col>
+          <h3 className="mb-0">📝 Blog Dashboard</h3>
+        </Col>
+        <Col className="text-end">
+          <Button variant="outline-light" onClick={() => navigate("/login")}>
+            Logout
+          </Button>
+        </Col>
+      </Row>
 
-    <Container className="py-5">
-      <h2 className="text-center mb-5">Dashboard</h2>
-
-      {role === "admin" && (
-        <Button
-          variant="primary"
-          className="mb-4"
-          onClick={() => setShowModal(true)}
-        >
-          Create New Blog
-        </Button>
-      )}
-
-      <h4 className="mb-4">Blog Posts</h4>
-
-      {loading ? (
-        <div className="text-center">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </div>
-      ) : (
-        <Row xs={1} md={2} lg={2} className="g-4">
-          {posts.length === 0 ? (
-            <p>No posts available.</p>
-          ) : (
-            posts.map((post) => (
-              <Col key={post._id}>
-                <Card className="h-100 shadow-sm">
-                  <Card.Body>
-                    <Card.Title>{post.title}</Card.Title>
-                    <Card.Text>{post.content}</Card.Text>
-                    <Card.Text>
-                      <strong>Author Name:</strong> {post.author?.name}
-                    </Card.Text>
-                    <Card.Text>
-                      <strong>Author Email:</strong> {post.author?.email}
-                    </Card.Text>
-                    {role === "admin" && (
-                      <div className="d-flex justify-content-between mt-3">
-                        <Button variant="info" onClick={() => handleEdit(post)}>
-                          Edit
-                        </Button>
-                        <Button
-                          variant="danger"
-                          onClick={() => handleDelete(post._id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    )}
-                  </Card.Body>
-                  <Card.Footer className="text-muted">
-                    <div>
-                      <strong>Created:</strong>{" "}
-                      {new Date(post.createdAt).toLocaleString()}
-                    </div>
-                    <div>
-                      <strong>Updated:</strong>{" "}
-                      {new Date(post.updatedAt).toLocaleString()}
-                    </div>
-                  </Card.Footer>
-                </Card>
-              </Col>
-            ))
-          )}
-        </Row>
-      )}
-
-      <Modal show={showModal} onHide={resetForm}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editPostId ? "Edit Blog" : "Create Blog"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleCreateOrUpdate}>
-            <Form.Group className="mb-3" controlId="formTitle">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter blog title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formContent">
-              <Form.Label>Content</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                placeholder="Enter blog content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              {editPostId ? "Update Blog" : "Create Blog"}
+      <Container className="py-5">
+        {role === "admin" && (
+          <div className="text-end mb-4">
+            <Button variant="primary" onClick={() => setShowModal(true)}>
+              + Create New Blog
             </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
-    </Container>
+          </div>
+        )}
+
+        <h4 className="mb-4">📚 Blog Posts</h4>
+
+        {loading ? (
+          <div className="text-center my-5">
+            <Spinner animation="border" role="status" />
+          </div>
+        ) : (
+          <Row xs={1} md={2} lg={2} className="g-4">
+            {posts.length === 0 ? (
+              <p>No posts available.</p>
+            ) : (
+              posts.map((post) => (
+                <Col key={post._id}>
+                  <Card className="h-100 blog-card">
+                    <Card.Header className="bg-primary text-white">
+                      <Card.Title className="mb-0">{post.title}</Card.Title>
+                    </Card.Header>
+                    <Card.Body className="bg-light">
+                      <Card.Text className="text-muted">{post.content}</Card.Text>
+                      <Card.Text>
+                        <strong>Author:</strong> {post.author?.name} <br />
+                        <strong>Email:</strong> {post.author?.email}
+                      </Card.Text>
+                      {role === "admin" && (
+                        <div className="d-flex justify-content-between mt-3">
+                          <Button
+                            variant="outline-info"
+                            size="sm"
+                            onClick={() => handleEdit(post)}
+                          >
+                            ✏️ Edit
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => handleDelete(post._id)}
+                          >
+                            🗑️ Delete
+                          </Button>
+                        </div>
+                      )}
+                    </Card.Body>
+                    <Card.Footer className="bg-white text-muted small">
+                      <div>
+                        <strong>Created:</strong> {new Date(post.createdAt).toLocaleString()}
+                      </div>
+                      <div>
+                        <strong>Updated:</strong> {new Date(post.updatedAt).toLocaleString()}
+                      </div>
+                    </Card.Footer>
+                  </Card>
+                </Col>
+              ))
+            )}
+          </Row>
+        )}
+
+        {/* Modal for create/edit */}
+        <Modal show={showModal} onHide={resetForm} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>{editPostId ? "✏️ Edit Blog" : "📝 Create Blog"}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleCreateOrUpdate}>
+              <Form.Group className="mb-3">
+                <Form.Label>Blog Title</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter blog title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Blog Content</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={5}
+                  placeholder="Write your blog content here..."
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <div className="text-end">
+                <Button variant="secondary" className="me-2" onClick={resetForm}>
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                  {editPostId ? "Update" : "Create"}
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
+      </Container>
     </>
   );
 };
